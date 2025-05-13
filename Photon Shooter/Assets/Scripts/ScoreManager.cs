@@ -4,12 +4,12 @@ using Photon.Pun;
 using Photon.Realtime;
 using System.Collections.Generic;
 using ExitGames.Client.Photon;
+using TMPro;
 
 public class ScoreManager : MonoBehaviourPunCallbacks
 {
     public static ScoreManager Instance { get; private set; }
     
-    [SerializeField] private Text scoreText;
     [SerializeField] private GameObject scoreEntryPrefab;
     [SerializeField] private Transform scoreboardContent;
     
@@ -141,7 +141,7 @@ public class ScoreManager : MonoBehaviourPunCallbacks
             GameObject scoreEntry = Instantiate(scoreEntryPrefab, scoreboardContent);
             
             // 텍스트 업데이트
-            Text[] texts = scoreEntry.GetComponentsInChildren<Text>();
+            TMPro.TextMeshProUGUI[] texts = scoreEntry.GetComponentsInChildren<TMPro.TextMeshProUGUI>();
             texts[0].text = player.NickName; // 이름
             
             int score = 0;

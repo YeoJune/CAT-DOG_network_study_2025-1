@@ -9,7 +9,7 @@ public class PlayerController : MonoBehaviourPun, IPunObservable
     
     [Header("Visuals")]
     [SerializeField] private SpriteRenderer playerSprite;
-    [SerializeField] private TextMeshProUGUI playerNameText;
+    [SerializeField] private TextMeshPro playerNameText;
     [SerializeField] private GameObject localIndicator;
     
     // 네트워크 동기화를 위한 변수들
@@ -37,7 +37,7 @@ public class PlayerController : MonoBehaviourPun, IPunObservable
             // 로컬 플레이어 표시기 활성화
             localIndicator.SetActive(true);
             // 이름 표시
-            playerNameText.text = "나";
+            playerNameText.text = "me";
         }
         else
         {
@@ -128,7 +128,7 @@ public class PlayerController : MonoBehaviourPun, IPunObservable
             if (photonView.IsMine)
             {
                 // 게임 오버 처리
-                Debug.Log("적과 충돌! 게임 오버!");
+                Debug.Log("Game Over!");
                 GameManager.Instance.GameOver();
                 
                 // --- TODO ---

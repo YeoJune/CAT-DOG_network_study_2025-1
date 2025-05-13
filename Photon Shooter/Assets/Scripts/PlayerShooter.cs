@@ -39,13 +39,6 @@ public class PlayerShooter : MonoBehaviourPun
         {
             bullet.Initialize(direction, bulletSpeed, photonView.Owner);
         }
-        
-        // 발사 효과음 재생 (이펙트는 예시로만 포함)
-        AudioSource audioSource = GetComponent<AudioSource>();
-        if (audioSource != null)
-        {
-            audioSource.Play();
-        }
     }
     // ------
 }

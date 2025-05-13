@@ -24,6 +24,14 @@ public class GameManager : MonoBehaviourPunCallbacks
     
     private void Start()
     {
+        // 스폰 포인트 초기화
+        GameObject SpawnPointParent = GameObject.Find("SpawnPoints");
+        spawnPoints = new Transform[SpawnPointParent.transform.childCount];
+        for (int i = 0; i < SpawnPointParent.transform.childCount; i++)
+        {
+            spawnPoints[i] = SpawnPointParent.transform.GetChild(i);
+        }
+
         if (PhotonNetwork.IsConnected)
         {
             SpawnPlayer();
@@ -53,6 +61,7 @@ public class GameManager : MonoBehaviourPunCallbacks
         if (!gameOver)
         {
             gameOver = true;
+            GameObject.Find("UIManager").GetComponent<UIManager>().ShowGameOver();
             Invoke("ReturnToLobby", 3f);
         }
     }

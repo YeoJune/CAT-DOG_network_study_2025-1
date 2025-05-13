@@ -1,11 +1,12 @@
 using UnityEngine;
 using UnityEngine.UI;
 using Photon.Pun;
+using TMPro;
 
 public class UIManager : MonoBehaviourPunCallbacks
 {
-    [SerializeField] private Text roomInfoText;
-    [SerializeField] private Text pingText;
+    [SerializeField] private TextMeshProUGUI roomInfoText;
+    [SerializeField] private TextMeshProUGUI pingText;
     [SerializeField] private GameObject scoreboardPanel;
     [SerializeField] private GameObject gameOverPanel;
     
@@ -50,13 +51,13 @@ public class UIManager : MonoBehaviourPunCallbacks
     {
         if (PhotonNetwork.InRoom)
         {
-            roomInfoText.text = "방 이름: " + PhotonNetwork.CurrentRoom.Name + 
-                                " | 플레이어: " + PhotonNetwork.CurrentRoom.PlayerCount + "/" + 
+            roomInfoText.text = "Room Name: " + PhotonNetwork.CurrentRoom.Name + 
+                                "\nPlayer: " + PhotonNetwork.CurrentRoom.PlayerCount + "/" + 
                                 PhotonNetwork.CurrentRoom.MaxPlayers;
         }
         else
         {
-            roomInfoText.text = "방에 연결되지 않음";
+            roomInfoText.text = "Not in a room";
         }
     }
     

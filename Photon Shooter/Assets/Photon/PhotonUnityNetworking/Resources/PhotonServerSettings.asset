@@ -37,6 +37,7 @@ MonoBehaviour:
   - ClickRpc
   - DestroyRpc
   - Fire
+  - InitializeBulletRPC
   DisableAutoOpenWizard: 1
   ShowSettings: 1
   DevRegionSetOnce: 1

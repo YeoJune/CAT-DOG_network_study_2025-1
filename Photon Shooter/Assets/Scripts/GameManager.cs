@@ -62,7 +62,6 @@ public class GameManager : MonoBehaviourPunCallbacks
         {
             gameOver = true;
             GameObject.Find("UIManager").GetComponent<UIManager>().ShowGameOver();
-            Invoke("ReturnToLobby", 3f);
         }
     }
     

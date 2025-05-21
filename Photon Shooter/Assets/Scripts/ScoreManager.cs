@@ -46,7 +46,7 @@ public class ScoreManager : MonoBehaviourPunCallbacks
         // 현재 룸에 있는 모든 플레이어에게 점수 할당
         foreach (Player player in PhotonNetwork.PlayerList)
         {
-            playerScores[player.UserId] = 0;
+            playerScores[player.NickName] = 0;
             
             // 초기 점수 정보 Room Properties에 저장
             if (PhotonNetwork.IsMasterClient)
@@ -80,8 +80,8 @@ public class ScoreManager : MonoBehaviourPunCallbacks
         // 기존 Room Properties 가져오기
         Hashtable roomProps = PhotonNetwork.CurrentRoom.CustomProperties;
         
-        // 플레이어 점수 키 생성 (예: "Score_userId")
-        string scoreKey = "Score_" + player.UserId;
+        // 플레이어 점수 키 생성 (예: "Score_NickName")
+        string scoreKey = "Score_" + player.NickName;
         
         // Room Properties 업데이트
         roomProps[scoreKey] = score;
@@ -94,7 +94,7 @@ public class ScoreManager : MonoBehaviourPunCallbacks
     private int GetPlayerScore(Player player)
     {
         // 플레이어 점수 키
-        string scoreKey = "Score_" + player.UserId;
+        string scoreKey = "Score_" + player.NickName;
         
         // Room Properties에서 점수 가져오기
         if (PhotonNetwork.CurrentRoom.CustomProperties.ContainsKey(scoreKey))
@@ -111,12 +111,12 @@ public class ScoreManager : MonoBehaviourPunCallbacks
         // 점수 정보 업데이트
         foreach (Player player in PhotonNetwork.PlayerList)
         {
-            string scoreKey = "Score_" + player.UserId;
+            string scoreKey = "Score_" + player.NickName;
             
             if (propertiesThatChanged.ContainsKey(scoreKey))
             {
                 // 로컬 점수 데이터 업데이트
-                playerScores[player.UserId] = (int)propertiesThatChanged[scoreKey];
+                playerScores[player.NickName] = (int)propertiesThatChanged[scoreKey];
             }
         }
         
@@ -145,9 +145,9 @@ public class ScoreManager : MonoBehaviourPunCallbacks
             texts[0].text = player.NickName; // 이름
             
             int score = 0;
-            if (playerScores.ContainsKey(player.UserId))
+            if (playerScores.ContainsKey(player.NickName))
             {
-                score = playerScores[player.UserId];
+                score = playerScores[player.NickName];
             }
             texts[1].text = score.ToString(); // 점수
             

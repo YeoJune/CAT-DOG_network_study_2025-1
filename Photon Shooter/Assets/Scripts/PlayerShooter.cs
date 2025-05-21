@@ -1,5 +1,6 @@
 using UnityEngine;
 using Photon.Pun;
+using Photon.Realtime;
 
 public class PlayerShooter : MonoBehaviourPun
 {
@@ -12,33 +13,38 @@ public class PlayerShooter : MonoBehaviourPun
     
     private void Update()
     {
-        // --- TODO ---
-        // 로컬 플레이어만 총알 발사 가능
-        if (photonView.IsMine && Input.GetMouseButton(0) && Time.time >= nextFireTime)
+        // 로컬 플레이어만 총알 발사 처리
+        if (photonView.IsMine && Input.GetMouseButtonDown(0) && Time.time >= nextFireTime)
         {
             // 다음 발사 시간 설정
             nextFireTime = Time.time + fireRate;
             
-            // RPC로 모든 클라이언트에 발사 정보 전달
-            photonView.RPC("Fire", RpcTarget.All, firePoint.position, firePoint.right);
+            // 직접 PhotonNetwork.Instantiate 호출 (이미 네트워크 동기화됨)
+            GameObject bulletObj = PhotonNetwork.Instantiate("Bullet", firePoint.position, Quaternion.identity);
+            
+            // 생성된 총알의 PhotonView ID 가져오기
+            int bulletViewID = bulletObj.GetComponent<PhotonView>().ViewID;
+            
+            // RPC로 모든 클라이언트에 초기화 정보 전달
+            photonView.RPC("InitializeBulletRPC", RpcTarget.All, bulletViewID, firePoint.right, photonView.Owner);
         }
-        // ------
     }
     
-    // --- TODO ---
-    // 발사 RPC 메서드
     [PunRPC]
-    private void Fire(Vector3 position, Vector3 direction, PhotonMessageInfo info)
+    private void InitializeBulletRPC(int bulletViewID, Vector3 direction, Player player)
     {
-        // Resources 폴더에서 총알 프리팹 로드
-        GameObject bulletObj = PhotonNetwork.Instantiate("Bullet", position, Quaternion.identity);
+        // ViewID로 총알 PhotonView 찾기
+        PhotonView bulletView = PhotonView.Find(bulletViewID);
         
-        // 총알 초기화
-        Bullet bullet = bulletObj.GetComponent<Bullet>();
-        if (bullet != null)
+        if (bulletView != null)
         {
-            bullet.Initialize(direction, bulletSpeed, photonView.Owner);
+            // 총알 초기화
+            Bullet bullet = bulletView.GetComponent<Bullet>();
+            if (bullet != null)
+            {
+                // 총알 초기화 (각 클라이언트에서 동일하게 동작하도록)
+                bullet.Initialize(direction, bulletSpeed, player);
+            }
         }
     }
-    // ------
 }

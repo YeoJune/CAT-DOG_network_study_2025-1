@@ -29,27 +29,29 @@ public class Bullet : MonoBehaviourPun
     private void OnTriggerEnter2D(Collider2D collision)
     {
         // --- TODO ---
-        // MasterClient만 적 처리 (게임 로직 일관성 유지)
-        if (PhotonNetwork.IsMasterClient)
+        
+        // 적과 충돌 처리
+        if (collision.CompareTag("Enemy"))
         {
-            // 적과 충돌 처리
-            if (collision.CompareTag("Enemy"))
+            // MasterClient만 적 처리 (게임 로직 일관성 유지)
+            if (PhotonNetwork.IsMasterClient)
             {
                 // 적 사망 처리
                 collision.GetComponent<Enemy>().Die();
                 
                 // 점수 증가 (총알 주인의 점수)
-                ScoreManager.Instance.AddScore(owner);
-                
-                // 총알 파괴
-                PhotonNetwork.Destroy(gameObject);
+                ScoreManager.Instance.AddScore(owner);                
             }
-            // 벽과 충돌 처리
-            else if (collision.CompareTag("Wall"))
-            {
-                // 총알 파괴
+            // 총알 파괴
+            if (photonView.IsMine)
                 PhotonNetwork.Destroy(gameObject);
-            }
+        }
+        // 벽과 충돌 처리
+        else if (collision.CompareTag("Wall"))
+        {
+            // 총알 파괴
+            if (photonView.IsMine)
+                PhotonNetwork.Destroy(gameObject);
         }
         // ------
     }

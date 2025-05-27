@@ -27,9 +27,7 @@ public class Bullet : MonoBehaviourPun
     }
     
     private void OnTriggerEnter2D(Collider2D collision)
-    {
-        // --- TODO ---
-        
+    {   
         // 적과 충돌 처리
         if (collision.CompareTag("Enemy"))
         {
@@ -53,6 +51,5 @@ public class Bullet : MonoBehaviourPun
             if (photonView.IsMine)
                 PhotonNetwork.Destroy(gameObject);
         }
-        // ------
     }
 }

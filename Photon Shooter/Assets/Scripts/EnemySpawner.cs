@@ -1,22 +1,23 @@
 using UnityEngine;
 using Photon.Pun;
 using System.Collections;
+using Photon.Realtime;
 
-public class EnemySpawner : MonoBehaviourPun
+// 상속을 MonoBehaviourPunCallbacks으로 변경
+public class EnemySpawner : MonoBehaviourPunCallbacks
 {
     [SerializeField] private float spawnRadius = 10f;
     [SerializeField] private float spawnInterval = 3f;
     [SerializeField] private int maxEnemies = 10;
+
+    private Coroutine spawnCoroutine;
     
     private void Start()
     {
-        // --- TODO ---
-        // MasterClient만 적 생성 담당 (게임 로직 일관성)
         if (PhotonNetwork.IsMasterClient)
         {
-            StartCoroutine(SpawnEnemies());
+            spawnCoroutine = StartCoroutine(SpawnEnemies());
         }
-        // ------
     }
     
     private IEnumerator SpawnEnemies()
@@ -32,14 +33,34 @@ public class EnemySpawner : MonoBehaviourPun
                 // 랜덤 위치 생성 (스폰 반경 내에서)
                 Vector2 spawnPosition = Random.insideUnitCircle * spawnRadius;
                 
-                // --- TODO ---
                 // Photon을 통해 적 생성
                 PhotonNetwork.Instantiate("Enemy", spawnPosition, Quaternion.identity);
-                // ------
             }
             
             // 스폰 간격만큼 대기
             yield return new WaitForSeconds(spawnInterval);
+        }
+    }
+    
+    // 🎯 핵심: MasterClient 변경 콜백 추가
+    public override void OnMasterClientSwitched(Player newMasterClient)
+    {
+        if (PhotonNetwork.IsMasterClient)
+        {
+            // 새로운 MasterClient가 되었을 때
+            if (spawnCoroutine == null)
+            {
+                spawnCoroutine = StartCoroutine(SpawnEnemies());
+            }
+        }
+        else
+        {
+            // MasterClient가 아니면 코루틴 정리
+            if (spawnCoroutine != null)
+            {
+                StopCoroutine(spawnCoroutine);
+                spawnCoroutine = null;
+            }
         }
     }
 }

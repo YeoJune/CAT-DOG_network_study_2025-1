@@ -36,13 +36,10 @@ public class NetworkManager : MonoBehaviourPunCallbacks
         // 중복 방지를 위해 숫자 추가
         PhotonNetwork.NickName = randomName + Random.Range(1, 10);
         
-        // --- TODO ---
         // Photon 서버에 연결
         PhotonNetwork.ConnectUsingSettings();
-        // ------
     }
     
-    // --- TODO ---
     // 마스터 서버 연결 성공 시 호출
     public override void OnConnectedToMaster()
     {
@@ -56,7 +53,6 @@ public class NetworkManager : MonoBehaviourPunCallbacks
         connectionStatusText.text = "Offline: Disconnected";
         startButton.interactable = false;
     }
-    // ------
     
     // 게임 시작 버튼 (방 생성 또는 참가)
     public void StartGame()
@@ -74,13 +70,10 @@ public class NetworkManager : MonoBehaviourPunCallbacks
             IsOpen = true
         };
         
-        // --- TODO ---
         // 방 생성 또는 참가 시도
         PhotonNetwork.JoinOrCreateRoom(roomName, roomOptions, TypedLobby.Default);
-        // ------
     }
     
-    // --- TODO ---
     // 방 생성/참가 성공 시 호출
     public override void OnJoinedRoom()
     {
@@ -100,5 +93,4 @@ public class NetworkManager : MonoBehaviourPunCallbacks
     {
         errorText.text = "Failed to create room: " + message;
     }
-    // ------
 }

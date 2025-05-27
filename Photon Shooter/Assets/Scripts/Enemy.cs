@@ -68,9 +68,7 @@ public class Enemy : MonoBehaviourPun
     {
         // 파티클 효과나 사운드는 여기서 실행
         
-        // --- TODO ---
         // 네트워크를 통해 모든 클라이언트에서 적 제거
         PhotonNetwork.Destroy(gameObject);
-        // ------
     }
 }

@@ -2,6 +2,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using Photon.Pun;
 using TMPro;
+using Photon.Realtime;
 
 public class UIManager : MonoBehaviourPunCallbacks
 {
@@ -9,6 +10,8 @@ public class UIManager : MonoBehaviourPunCallbacks
     [SerializeField] private TextMeshProUGUI pingText;
     [SerializeField] private GameObject scoreboardPanel;
     [SerializeField] private GameObject gameOverPanel;
+    [SerializeField] private TextMeshProUGUI masterClientText;
+    [SerializeField] private TextMeshProUGUI networkStatsText;
     
     // 핑 업데이트 주기
     private float pingUpdateInterval = 1.0f;
@@ -51,21 +54,60 @@ public class UIManager : MonoBehaviourPunCallbacks
     {
         if (PhotonNetwork.InRoom)
         {
-            roomInfoText.text = "Room Name: " + PhotonNetwork.CurrentRoom.Name + 
-                                "\nPlayer: " + PhotonNetwork.CurrentRoom.PlayerCount + "/" + 
+            roomInfoText.text = "Room Name: " + PhotonNetwork.CurrentRoom.Name +
+                                "\nPlayer: " + PhotonNetwork.CurrentRoom.PlayerCount + "/" +
                                 PhotonNetwork.CurrentRoom.MaxPlayers;
+
+            // 🎯 MasterClient 정보 표시
+            if (masterClientText != null)
+            {
+                masterClientText.text = "Master: " + PhotonNetwork.MasterClient.NickName;
+            }
         }
         else
         {
             roomInfoText.text = "Not in a room";
+            if (masterClientText != null)
+            {
+                masterClientText.text = "";
+            }
         }
     }
+
+    public override void OnMasterClientSwitched(Player newMasterClient)
+    {
+        UpdateRoomInfo();
+        Debug.Log("🔄 New MasterClient: " + newMasterClient.NickName);
+    }
     
-    // 핑 업데이트
+    // 🎯 UpdatePing 메서드 확장
     private void UpdatePing()
     {
-        pingText.text = "Ping: " + PhotonNetwork.GetPing() + "ms";
+        // 기존 핑 표시 (간단한 버전)
+        if (pingText != null)
+        {
+            pingText.text = "Ping: " + PhotonNetwork.GetPing() + "ms";
+        }
+        // 🎯 상세 네트워크 정보 표시
+        if (networkStatsText != null && PhotonNetwork.InRoom)
+        {
+            string stats = $"Network Status\n";
+            stats += $"Ping: {PhotonNetwork.GetPing()}ms\n";
+            stats += $"Send Rate: {PhotonNetwork.SendRate}/s\n";
+            stats += $"Region: {PhotonNetwork.CloudRegion}\n";
+            stats += $"Players: {PhotonNetwork.CurrentRoom.PlayerCount}/{PhotonNetwork.CurrentRoom.MaxPlayers}\n";
+            stats += $"Connected: {(PhotonNetwork.IsConnected ? "V" : "X")}";
+            networkStatsText.text = stats;
+            // 🎨 핑에 따른 색상 변경
+            if (PhotonNetwork.GetPing() < 50)
+                networkStatsText.color = Color.green;
+            else if (PhotonNetwork.GetPing() < 150)
+                networkStatsText.color = Color.yellow;
+            else
+                networkStatsText.color = Color.red;
+        }
     }
+
     
     // 게임오버 패널 표시
     public void ShowGameOver()

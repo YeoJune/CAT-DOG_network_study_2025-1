@@ -1,6 +1,7 @@
 using UnityEngine;
 using Photon.Pun;
 using Photon.Realtime;
+using System.Collections.Generic;
 
 public class PlayerShooter : MonoBehaviourPun
 {
@@ -10,22 +11,25 @@ public class PlayerShooter : MonoBehaviourPun
     [SerializeField] private float bulletSpeed = 10f;
     
     private float nextFireTime = 0f;
+
+    private Queue<float> recentFireTimes = new Queue<float>();
+    private int maxFiresPerSecond = 8;  // 초당 최대 8발
     
     private void Update()
     {
         // 로컬 플레이어만 총알 발사 처리
         if (photonView.IsMine && Input.GetMouseButtonDown(0) && Time.time >= nextFireTime)
         {
-            // 다음 발사 시간 설정
+            // 🛡️ 발사 빈도 검증
+            if (!ValidateFireRate())
+            {
+                Debug.LogWarning("🚨 Fire rate limit exceeded");
+                return;  // 발사 차단
+            }
             nextFireTime = Time.time + fireRate;
-            
-            // 직접 PhotonNetwork.Instantiate 호출 (이미 네트워크 동기화됨)
+            // 기존 총알 생성 코드...
             GameObject bulletObj = PhotonNetwork.Instantiate("Bullet", firePoint.position, Quaternion.identity);
-            
-            // 생성된 총알의 PhotonView ID 가져오기
             int bulletViewID = bulletObj.GetComponent<PhotonView>().ViewID;
-            
-            // RPC로 모든 클라이언트에 초기화 정보 전달
             photonView.RPC("InitializeBulletRPC", RpcTarget.All, bulletViewID, firePoint.right, photonView.Owner);
         }
     }
@@ -47,4 +51,20 @@ public class PlayerShooter : MonoBehaviourPun
             }
         }
     }
+
+    // 🎯 발사 빈도 검증 메서드
+    private bool ValidateFireRate()
+    {
+        float currentTime = Time.time;
+        // 현재 발사 시간 기록
+        recentFireTimes.Enqueue(currentTime);
+        // 1초 이전 기록들 제거
+        while (recentFireTimes.Count > 0 && currentTime - recentFireTimes.Peek() > 1f)
+        {
+            recentFireTimes.Dequeue();
+        }
+        // 초당 발사 횟수 제한 확인
+        return recentFireTimes.Count <= maxFiresPerSecond;
+    }
+
 }

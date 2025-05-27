@@ -42,7 +42,6 @@ public class ScoreManager : MonoBehaviourPunCallbacks
     {
         playerScores.Clear();
         
-        // --- TODO ---
         // 현재 룸에 있는 모든 플레이어에게 점수 할당
         foreach (Player player in PhotonNetwork.PlayerList)
         {
@@ -54,13 +53,11 @@ public class ScoreManager : MonoBehaviourPunCallbacks
                 SetPlayerScore(player, 0);
             }
         }
-        // ------
     }
     
     // 점수 증가
     public void AddScore(Player player)
     {
-        // --- TODO ---
         // Room Properties를 통해 점수 관리
         if (PhotonNetwork.IsMasterClient)
         {
@@ -70,10 +67,8 @@ public class ScoreManager : MonoBehaviourPunCallbacks
             // Room Properties에 업데이트된 점수 저장
             SetPlayerScore(player, newScore);
         }
-        // ------
     }
     
-    // --- TODO ---
     // Room Properties에 플레이어 점수 설정
     private void SetPlayerScore(Player player, int score)
     {
@@ -123,7 +118,6 @@ public class ScoreManager : MonoBehaviourPunCallbacks
         // UI 업데이트
         UpdateScoreUI();
     }
-    // ------
     
     // 점수 UI 업데이트
     private void UpdateScoreUI()

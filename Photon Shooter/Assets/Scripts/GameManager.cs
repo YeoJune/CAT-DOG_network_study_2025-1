@@ -49,11 +49,9 @@ public class GameManager : MonoBehaviourPunCallbacks
         int spawnIndex = Random.Range(0, spawnPoints.Length);
         Transform spawnPoint = spawnPoints[spawnIndex];
         
-        // --- TODO ---
         // Photon을 통해 플레이어 생성
         // Resources 폴더 내의 Player 프리팹 사용
         PhotonNetwork.Instantiate("Player", spawnPoint.position, Quaternion.identity);
-        // ------
     }
     
     public void GameOver()
@@ -65,16 +63,14 @@ public class GameManager : MonoBehaviourPunCallbacks
         }
     }
     
-    private void ReturnToLobby()
+    public void ReturnToLobby()
     {
         PhotonNetwork.LeaveRoom();
     }
     
-    // --- TODO ---
     // 방을 떠난 후 호출
     public override void OnLeftRoom()
     {
         SceneManager.LoadScene("Lobby");
     }
-    // ------
 }
